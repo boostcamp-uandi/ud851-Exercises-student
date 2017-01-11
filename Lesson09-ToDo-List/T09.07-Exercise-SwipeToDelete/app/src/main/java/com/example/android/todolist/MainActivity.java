@@ -16,8 +16,10 @@
 
 package com.example.android.todolist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
@@ -29,12 +31,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.android.todolist.data.TaskContract;
 
 
 public class MainActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, CustomCursorAdapter.ListItemClickListener {
 
 
     // Constants for logging and referring to a unique loader
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements
     private CustomCursorAdapter mAdapter;
     RecyclerView mRecyclerView;
 
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new CustomCursorAdapter(this);
+        mAdapter = new CustomCursorAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
 
         /*
@@ -80,10 +84,17 @@ public class MainActivity extends AppCompatActivity implements
 
                 // TODO (1) Construct the URI for the item to delete
                 //[Hint] Use getTag (from the adapter code) to get the id of the swiped item
+                int id = (int) viewHolder.itemView.getTag();
 
                 // TODO (2) Delete a single row of data using a ContentResolver
+                Uri uri = TaskContract.TaskEntry.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(Integer.toString(id)).build();
+
+                int countOfDeleted = getContentResolver().delete(uri, null, null);
+                Toast.makeText(MainActivity.this, countOfDeleted + " deleted!", Toast.LENGTH_SHORT).show();
 
                 // TODO (3) Restart the loader to re-query for all tasks after a deletion
+                getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, MainActivity.this);
                 
             }
         }).attachToRecyclerView(mRecyclerView);
@@ -209,5 +220,24 @@ public class MainActivity extends AppCompatActivity implements
             mAdapter.swapCursor(null);
         }
 
+    @Override
+    public void onListItemClick(int clickedItemId) {
+
+        if (mToast != null) {
+            mToast.cancel();
+        }
+
+        String toastMessage = "Id #" + clickedItemId + " clicked.";
+        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
+
+        Context context = MainActivity.this;
+        Class destination = DetailActivity.class;
+        Intent intent = new Intent(context, destination);
+        String id = Integer.toString(clickedItemId);
+        intent.putExtra(getString(R.string.task_id), id);
+        startActivity(intent);
+    }
 }
 
