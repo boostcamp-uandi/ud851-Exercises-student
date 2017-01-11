@@ -91,6 +91,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:onClick="testNotification"
-        android:text="Test Notification" />
+        android:text="15분마다 알림. 아니면 눌러서" />
 
 </LinearLayout>
