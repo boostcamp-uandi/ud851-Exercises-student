@@ -2,13 +2,14 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- TODO (2) Create a res->bools.xml file and create a boolean for this default value -->
+
     <!-- TODO (3) Update these values to be values from resource files and not hard coded -->
 
     <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="show_bass"
-        android:summaryOff="Hidden"
-        android:summaryOn="Shown"
-        android:title="Show Bass" />
+        android:defaultValue="@bool/bool_default_value"
+        android:key="@string/bass_key"
+        android:summaryOff="@string/pref_checkbox_true"
+        android:summaryOn="@string/pref_checkbox_false"
+        android:title="show_bass" />
 
 </PreferenceScreen>
