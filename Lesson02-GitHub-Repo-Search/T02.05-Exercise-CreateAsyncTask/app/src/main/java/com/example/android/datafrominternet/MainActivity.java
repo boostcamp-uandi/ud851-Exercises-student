@@ -15,6 +15,7 @@
  */
 package com.example.android.datafrominternet;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -67,8 +68,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO (1) Create a class called GithubQueryTask that extends AsyncTask<URL, Void, String>
-    // TODO (2) Override the doInBackground method to perform the query. Return the results. (Hint: You've already written the code to perform the query)
-    // TODO (3) Override onPostExecute to display the results in the TextView
+    public class GithubQueryTask extends AsyncTask<URL, void, String>{
+        // TODO (2) Override the doInBackground method to perform the query. Return the results. (Hint: You've already written the code to perform the query)
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            URL url = urls[0];
+            String results = null;
+            try{
+                results = NetworkUtils.getResponseFromHttpUrl(url);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            return results;
+        }
+
+
+        // TODO (3) Override onPostExecute to display the results in the TextView
+
+        @Override
+        protected void onPostExecute(String s) {
+            if(s!=null && !s.equals("")){
+                mSearchResultsTextView.setText(s);
+            }
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

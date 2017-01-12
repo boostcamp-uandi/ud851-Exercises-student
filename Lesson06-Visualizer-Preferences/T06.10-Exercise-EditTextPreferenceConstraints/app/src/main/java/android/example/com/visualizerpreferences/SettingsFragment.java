@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 // TODO (1) Implement OnPreferenceChangeListener
 public class SettingsFragment extends PreferenceFragmentCompat implements
-        OnSharedPreferenceChangeListener {
+        OnSharedPreferenceChangeListener, android.support.v7.preference.Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -43,7 +43,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
         // Go through all of the preferences, and set up their preference summary.
         for (int i = 0; i < count; i++) {
-            Preference p = prefScreen.getPreference(i);
+            android.support.v7.preference.Preference p = prefScreen.getPreference(i);
             // You don't need to set up preference summaries for checkbox preferences because
             // they are already set up in xml using summaryOff and summary On
             if (!(p instanceof CheckBoxPreference)) {
@@ -52,12 +52,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             }
         }
         // TODO (3) Add the OnPreferenceChangeListener specifically to the EditTextPreference
+        android.support.v7.preference.Preference p = findPreference(getString(R.string.pref_size_key));
+        p.setOnPreferenceChangeListener(this);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         // Figure out which preference was changed
-        Preference preference = findPreference(key);
+        android.support.v7.preference.Preference preference = findPreference(key);
         if (null != preference) {
             // Updates the summary for the preference
             if (!(preference instanceof CheckBoxPreference)) {
@@ -89,6 +91,27 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     }
 
     // TODO (2) Override onPreferenceChange. This method should try to convert the new preference value
+
+    @Override
+    public boolean onPreferenceChange(android.support.v7.preference.Preference preference, Object o) {
+        String key = getString(R.string.pref_size_key);
+        if(preference.getKey().equals(key)){
+            String stringSize = (String) o;
+            try{
+                float size = Float.parseFloat(stringSize);
+                if(size>3||size<=0){
+                    Toast.makeText(getContext(), "Please select a number between 0.1 and 3", Toast.LENGTH_LONG);
+                    return false;
+                }
+            }catch(NumberFormatException e){
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Please select a number between 0.1 and 3", Toast.LENGTH_LONG);
+                return false;
+            }
+        }
+        return true;
+    }
+
     // to a float; if it cannot, show a helpful error message and return false. If it can be converted
     // to a float check that that float is between 0 (exclusive) and 3 (inclusive). If it isn't, show
     // an error message and return false. If it is a valid number, return true.
