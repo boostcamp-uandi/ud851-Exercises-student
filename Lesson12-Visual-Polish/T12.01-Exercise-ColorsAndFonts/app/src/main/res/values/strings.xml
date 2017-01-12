@@ -33,4 +33,6 @@
     <string name="first">First_name</string>
     <string name="last">Last_name</string>
 
+    <string name="smallcaps_16">smallcaps_16</string>
+
 </resources>
