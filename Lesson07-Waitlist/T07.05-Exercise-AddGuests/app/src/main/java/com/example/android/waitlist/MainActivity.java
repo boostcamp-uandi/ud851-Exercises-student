@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase mDb;
 
     // TODO (1) Create local EditText members for mNewGuestNameEditText and mNewPartySizeEditText
+    private EditText mNewGuestNameEditText;
+    private EditText mNewPartySizeEditText;
 
     // TODO (13) Create a constant string LOG_TAG that is equal to the class.getSimpleName()
 
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         waitlistRecyclerView = (RecyclerView) this.findViewById(R.id.all_guests_list_view);
 
         // TODO (2) Set the Edit texts to the corresponding views using findViewById
+        mNewGuestNameEditText = (EditText) findViewById(R.id.person_name_edit_text);
+        mNewPartySizeEditText = (EditText) findViewById(R.id.party_count_edit_text);
 
         // Set layout for the RecyclerView, because it's a list we are using the linear layout
         waitlistRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -49,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         mDb = dbHelper.getWritableDatabase();
 
         // TODO (3) Remove this fake data call since we will be inserting our own data now
-        TestUtil.insertFakeData(mDb);
 
         // Get all guest info from the database and save in a cursor
         Cursor cursor = getAllGuests();
@@ -70,6 +73,18 @@ public class MainActivity extends AppCompatActivity {
     public void addToWaitlist(View view) {
 
         // TODO (9) First thing, check if any of the EditTexts are empty, return if so
+        if(mNewPartySizeEditText.getText().length() == 0 ||
+                mNewGuestNameEditText.getText().length() == 0){
+            return;
+        }
+
+        int partySize = 1;
+
+        try{
+            partySize = Integer.parseInt(mNewPartySizeEditText.getText().toString());
+        }catch(Exception e){
+            Log.d("dd", "에러");
+        }
 
         // TODO (10) Create an integer to store the party size and initialize to 1
 
@@ -77,12 +92,17 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO (12) Make sure you surround the Integer.parseInt with a try catch and log any exception
 
+        addNewGuest(mNewGuestNameEditText.getText().toString(), partySize);
+
         // TODO (14) call addNewGuest with the guest name and party size
 
         // TODO (19) call mAdapter.swapCursor to update the cursor by passing in getAllGuests()
+        mAdapter.swapCursor(getAllGuests());
 
         // TODO (20) To make the UI look nice, call .getText().clear() on both EditTexts, also call clearFocus() on mNewPartySizeEditText
-
+        mNewPartySizeEditText.clearFocus();
+        mNewGuestNameEditText.getText().clear();
+        mNewPartySizeEditText.getText().clear();
     }
 
 
@@ -105,6 +125,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO (4) Create a new addGuest method
+    void addNewGuest(String name, int size){
+        // 데이터베이스에 데이터를 추가하거나 갱신하는 것은 ContentsValue 클래스의 도움을 받아 수행된다.
+        // 이 클래스는 키와 값의 쌍으로 구성되며 자바의 HashMap 또는 그동안 사용하던 안드로이드의 Bundle과 유사하다.
+        ContentValues cv = new ContentValues();
+        cv.put(WaitlistContract.WaitlistEntry.COLUMN_GUEST_NAME, name);
+        cv.put(WaitlistContract.WaitlistEntry.COLUMN_PARTY_SIZE, size);
+
+        // @params (테이블 이름, nullColumnHack(null값이 허용되는 열의 이름을 지정), cv인스턴스)
+        mDb.insert(WaitlistContract.WaitlistEntry.TABLE_NAME, null, cv);
+    }
 
     // TODO (5) Inside, create a ContentValues instance to pass the values onto the insert query
 

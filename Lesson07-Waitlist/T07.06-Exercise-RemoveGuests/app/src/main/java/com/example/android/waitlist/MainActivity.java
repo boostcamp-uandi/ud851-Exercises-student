@@ -1,5 +1,6 @@
 package com.example.android.waitlist;
 
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -58,6 +59,21 @@ public class MainActivity extends AppCompatActivity {
 
 
         //TODO (3) Create a new ItemTouchHelper with a SimpleCallback that handles both LEFT and RIGHT swipe directions
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT){
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false; // 사용하지 않는다.
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                // 뷰홀더 아이템의 tag값에 id를 미리 저장해둬서 그 값으로 delete
+                long id = (long) viewHolder.itemView.getTag();
+                removeGuest(id);
+                mAdapter.swapCursor(getAllGuests());
+            }
+        }).attachToRecyclerView(waitlistRecyclerView);
 
         // TODO (4) Override onMove and simply return false inside
 
@@ -137,6 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     // TODO (1) Create a new function called removeGuest that takes long id as input and returns a boolean
+    boolean removeGuest(long id){
+        // @params (테이블 이름, where절, whereArgs)
+        return mDb.delete(WaitlistContract.WaitlistEntry.TABLE_NAME, WaitlistContract.WaitlistEntry._ID + "=" + id, null) > 0;
+    }
 
     // TODO (2) Inside, call mDb.delete to pass in the TABLE_NAME and the condition that WaitlistEntry._ID equals id
 
