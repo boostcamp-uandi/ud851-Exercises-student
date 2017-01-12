@@ -85,5 +85,12 @@
             android:text="@string/default_charge_notification_count" />
 
     </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="testNotification"
+        android:text="알림 테스트" />
     <!-- TODO (13) Add a button for testing your notification with an onClick method called testNotification -->
 </LinearLayout>

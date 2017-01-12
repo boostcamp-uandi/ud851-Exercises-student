@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         /* Setting an OnClickListener allows us to do something when this button is clicked. */
         mDoSomethingCoolButton.setOnClickListener(new OnClickListener() {
-
             /**
              * The onClick method is triggered when this button (mDoSomethingCoolButton) is clicked.
              *
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO (1) Retrieve the text from the EditText and store it in a variable
-
+                EditText editText = (EditText) findViewById(R.id.et_text_entry);
                 /*
                  * Storing the Context in a variable in this case is redundant since we could have
                  * just used "this" or "MainActivity.this" in the method call below. However, we
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent startChildActivityIntent = new Intent(context, destinationActivity);
 
                 // TODO (2) Use the putExtra method to put the String from the EditText in the Intent
-
+                startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, editText.getText().toString());
                 /*
                  * Once the Intent has been created, we can use Activity's method, "startActivity"
                  * to start the ChildActivity.

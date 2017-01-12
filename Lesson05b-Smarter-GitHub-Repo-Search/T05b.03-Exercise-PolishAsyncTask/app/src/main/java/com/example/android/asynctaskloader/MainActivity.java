@@ -21,6 +21,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements
 
     /* A constant to save and restore the URL that is being displayed */
     private static final String SEARCH_QUERY_URL_EXTRA = "query";
+    private static final String TAG = "LoaderActivity";
 
     /*
      * This number will uniquely identify our Loader and is chosen arbitrarily. You can change this
@@ -166,10 +168,11 @@ public class MainActivity extends AppCompatActivity implements
         return new AsyncTaskLoader<String>(this) {
 
             // TODO (1) Create a String member variable called mGithubJson that will store the raw JSON
+            String mGithubJson;
 
             @Override
             protected void onStartLoading() {
-
+                Log.d(TAG, "onStartLoading()");
                 /* If no arguments were passed, we don't have a query to perform. Simply return. */
                 if (args == null) {
                     return;
@@ -180,14 +183,19 @@ public class MainActivity extends AppCompatActivity implements
                  * loading indicator to the user
                  */
                 mLoadingIndicator.setVisibility(View.VISIBLE);
-
+                Log.d(TAG, "onStartLoading() mGithubJson = " + mGithubJson);
                 // TODO (2) If mGithubJson is not null, deliver that result. Otherwise, force a load
-                forceLoad();
+                if(mGithubJson != null){
+                    deliverResult(mGithubJson);
+                }else{
+                    Log.d("TAG", "forceLoad()");
+                    forceLoad();
+                }
             }
 
             @Override
             public String loadInBackground() {
-
+                Log.d(TAG, "loadInBackground");
                 /* Extract the search query from the args using our constant */
                 String searchQueryUrlString = args.getString(SEARCH_QUERY_URL_EXTRA);
 
@@ -207,6 +215,13 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
 
+            @Override
+            public void deliverResult(String data) {
+                Log.d(TAG, "deliverResult() mGithubJson = " + mGithubJson);
+                mGithubJson = data;
+                super.deliverResult(data);
+            }
+
             // TODO (3) Override deliverResult and store the data in mGithubJson
             // TODO (4) Call super.deliverResult after storing the data
         };
@@ -214,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-
+        Log.d(TAG, "onLoadFinished");
         /* When we finish loading, we want to hide the loading indicator from the user. */
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         /*
