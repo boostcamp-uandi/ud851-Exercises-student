@@ -15,7 +15,10 @@
  */
 package com.example.android.background;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -38,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView mChargingImageView;
 
     private Toast mToast;
-
+    ChargingBroadcastReceiver mChargingReceiver;
+    IntentFilter mChargingIntentFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +61,10 @@ public class MainActivity extends AppCompatActivity implements
         /** Setup the shared preference listener **/
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
-
+        mChargingIntentFilter = new IntentFilter();
+        mChargingReceiver = new ChargingBroadcastReceiver();
+        mChargingIntentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        mChargingIntentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
         // TODO (5) Create and instantiate a new instance variable for your ChargingBroadcastReceiver
         // and an IntentFilter
         // TODO (6) Call the addAction method on your intent filter and add Intent.ACTION_POWER_CONNECTED
@@ -67,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements
 
     // TODO (7) Override onResume and setup your broadcast receiver. Do this by calling
     // registerReceiver with the ChargingBroadcastReceiver and IntentFilter.
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mChargingReceiver, mChargingIntentFilter);
+    }
 
     // TODO (8) Override onPause and unregister your receiver using the unregisterReceiver method
     
@@ -93,7 +106,10 @@ public class MainActivity extends AppCompatActivity implements
     // either change the image of mChargingImageView to ic_power_pink_80px if the boolean is true
     // or R.drawable.ic_power_grey_80px it it's not. This method will eventually update the UI
     // when our broadcast receiver is triggered when the charging state changes.
-
+    public void showCharging(boolean isCharging){
+        if(isCharging) mChargingImageView.setImageResource(R.drawable.ic_power_pink_80px);
+        else mChargingImageView.setImageResource(R.drawable.ic_power_grey_80px);
+    }
     /**
      * Adds one to the water count and shows a toast
      */
@@ -134,4 +150,13 @@ public class MainActivity extends AppCompatActivity implements
         // Intent.ACTION_POWER_CONNECTED. If it matches, it's charging. If it doesn't match, it's not
         // charging.
         // TODO (4) Update the UI using the showCharging method you wrote
+
+    class ChargingBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)){
+                showCharging(true);
+            }
+        }
+    }
 }
