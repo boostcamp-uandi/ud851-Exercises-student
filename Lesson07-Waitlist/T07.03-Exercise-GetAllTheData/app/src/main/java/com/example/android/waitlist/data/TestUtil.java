@@ -44,14 +44,14 @@ public class TestUtil {
         //insert all guests in one transaction
         try
         {
-            db.beginTransaction();
+            db.beginTransaction();//말그대로 트랜잭션. 속도향상
             //clear the table first
             db.delete (WaitlistContract.WaitlistEntry.TABLE_NAME,null,null);
             //go through the list and add one by one
             for(ContentValues c:list){
                 db.insert(WaitlistContract.WaitlistEntry.TABLE_NAME, null, c);
             }
-            db.setTransactionSuccessful();
+            db.setTransactionSuccessful();//트랜잭션완료.
         }
         catch (SQLException e) {
             //too bad :(
