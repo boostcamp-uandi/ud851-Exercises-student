@@ -39,6 +39,8 @@ public class TaskContentProvider extends ContentProvider {
         // Complete onCreate() and initialize a TaskDbhelper on startup
         // [Hint] Declare the DbHelper as a global variable
 
+        // content provider는 결국 database에 접근하여 데이터를 읽어 오거나, 저장, 업데이트 , 삭제 해야되는거다.
+        // 따라서 그 작업을 하기위해서 프로바이더는 데이터베이스와 연결이 되어있어야 한다.
         Context context = getContext();
         mTaskDbHelper = new TaskDbHelper(context);
         return true;

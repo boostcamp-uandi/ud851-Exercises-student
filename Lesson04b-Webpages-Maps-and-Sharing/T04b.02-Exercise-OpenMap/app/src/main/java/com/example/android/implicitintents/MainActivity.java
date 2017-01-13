@@ -49,11 +49,23 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onClickOpenAddressButton(View v) {
         // TODO (5) Store an address in a String
-
+        String addressString = "1600 Amphitheatre Parkway, CA";
         // TODO (6) Use Uri.parse with the appropriate scheme and query to form the Uri for the address
 
+
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("geo").path("0,0").query(addressString);
+        Uri addressUri = builder.build();
+
         // TODO (7) Replace the Toast with a call to showMap, passing in the Uri from the previous step
-        Toast.makeText(this, "TODO: Open a map when this button is clicked", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "TODO: Open a map when this button is clicked", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(addressUri);
+
+        if(intent.resolveActivity(getPackageManager()) != null){
+            startActivity(intent);
+        }
     }
 
     /**

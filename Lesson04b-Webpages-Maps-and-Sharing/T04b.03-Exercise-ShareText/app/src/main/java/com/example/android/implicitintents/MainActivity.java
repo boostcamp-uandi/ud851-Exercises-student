@@ -23,8 +23,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import static android.R.attr.mimeType;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -64,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onClickShareTextButton(View v) {
         // TODO (5) Specify a String you'd like to share
-
+        String share = "I want to share this sentence";
         // TODO (6) Replace the Toast with shareText, passing in the String from step 5
-        Toast.makeText(this, "TODO: Share text when this is clicked", Toast.LENGTH_LONG).show();
+        shareText(share);
     }
 
     /**
@@ -142,10 +140,14 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO (1) Create a void method called shareText that accepts a String as a parameter
     // Do steps 2 - 4 within the shareText method
+    public void shareText(String textToShare){
 
         // TODO (2) Create a String variable called mimeType and set it to "text/plain"
-
+        String mimeType = "text/plain";
         // TODO (3) Create a title for the chooser window that will pop up
-
+        String title = "title";
         // TODO (4) Use ShareCompat.IntentBuilder to build the Intent and start the chooser
+        ShareCompat.IntentBuilder.from(this).setType(mimeType).setChooserTitle(title)
+                .setText(textToShare).startChooser();
+    }
 }

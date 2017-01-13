@@ -18,6 +18,7 @@ package com.example.android.todolist;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
@@ -80,11 +81,19 @@ public class MainActivity extends AppCompatActivity implements
 
                 // TODO (1) Construct the URI for the item to delete
                 //[Hint] Use getTag (from the adapter code) to get the id of the swiped item
+                // 메인에서 swipe가 되면 데이터베이스 속에 데이터를 지울껀데 그러려면 컨텐트 프로바이더를 통해서 지운다.
+                // 컨텐트 프로바이더를 접근하기위해선 컨텐트 리죨버가 필요하다.
+                // 리죨버에 uri 넘겨줘야 하니까 uri만들자..!
+                // 우선 어떤 부분에서 swipe가 일어 났는지 어떤 row인지 알아야됨
+                // id가 모지 여기서
+                int id = (int) viewHolder.itemView.getTag();
+                String stringId = Integer.toString(id);
+                Uri uri = TaskContract.TaskEntry.CONTENT_URI.buildUpon().appendPath(stringId).build();
 
-                // TODO (2) Delete a single row of data using a ContentResolver
-
+                // TODO (2) Delete a single row of data using0 a ContentResolver
+                int result = getContentResolver().delete(uri, null, null);
                 // TODO (3) Restart the loader to re-query for all tasks after a deletion
-                
+                getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, MainActivity.this);
             }
         }).attachToRecyclerView(mRecyclerView);
 
