@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 // TODO (1) Implement OnPreferenceChangeListener
 public class SettingsFragment extends PreferenceFragmentCompat implements
-        OnSharedPreferenceChangeListener {
+        OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -52,6 +52,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             }
         }
         // TODO (3) Add the OnPreferenceChangeListener specifically to the EditTextPreference
+        Preference preference = findPreference(getString(R.string.pref_size_key));
+        preference.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -92,6 +94,26 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     // to a float; if it cannot, show a helpful error message and return false. If it can be converted
     // to a float check that that float is between 0 (exclusive) and 3 (inclusive). If it isn't, show
     // an error message and return false. If it is a valid number, return true.
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String sizekey = getString(R.string.pref_size_key);
+        if(preference.getKey().equals(sizekey)){
+            String stringSize = ((String)(newValue)).trim();
+            if(stringSize.equals(""))
+                stringSize="1";
+            try{
+                float size = Float.parseFloat(stringSize);
+                if( size > 3 || size <= 0){
+                    Toast.makeText(getContext(),"0.1 ~ 3",Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }catch(NumberFormatException nfe){
+                Toast.makeText(getContext(),"0.1 ~ 3",Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,4 +128,5 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
+
 }

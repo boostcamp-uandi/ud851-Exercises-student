@@ -17,6 +17,14 @@
     <string name="pref_show_false">Hidden</string>
 
     <!-- TODO (2) Add all of the strings for the new checkboxes -->
+    <!-- Label for the show bass checkbox preference -->
+    <string name="pref_show_bass_label2">Show Mid Bass</string>
+    <!-- Key name for storing bass in SharedPreferences -->
+    <string name="pref_show_bass_key2" translatable="false">show_mid_bass</string>
+    <!-- Label for the show bass checkbox preference -->
+    <string name="pref_show_bass_label3">Show Treble</string>
+    <!-- Key name for storing bass in SharedPreferences -->
+    <string name="pref_show_bass_key3" translatable="false">show_treble</string>
 
     <!-- Value in SharedPreferences for red color option -->
     <string name="pref_color_red_value" translatable="false">red</string>
