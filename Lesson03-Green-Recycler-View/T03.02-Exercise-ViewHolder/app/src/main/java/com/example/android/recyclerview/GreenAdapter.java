@@ -77,6 +77,8 @@ public class GreenAdapter extends RecyclerView.Adapter<GreenAdapter.NumberViewHo
      *                  for more details.
      * @return A new NumberViewHolder that holds the View for each list item
      */
+
+
     @Override
     public NumberViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
@@ -103,7 +105,7 @@ public class GreenAdapter extends RecyclerView.Adapter<GreenAdapter.NumberViewHo
     @Override
     public void onBindViewHolder(NumberViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
-        holder.bind(position);
+        holder.listItemNumberView.setText(String.valueOf(position));
     }
 
     /**
@@ -118,8 +120,14 @@ public class GreenAdapter extends RecyclerView.Adapter<GreenAdapter.NumberViewHo
     }
 
     // TODO (12) Create a class called NumberViewHolder that extends RecyclerView.ViewHolder
+    public class NumberViewHolder extends  RecyclerView.ViewHolder{
+        TextView listItemNumberView;
+        public NumberViewHolder(View itemView) {
+            super(itemView);
+            listItemNumberView = (TextView) itemView.findViewById(R.id.tv_item_number);
+        }
 
-    // TODO (13) Within NumberViewHolder, create a TextView variable called listItemNumberView
+        // TODO (13) Within NumberViewHolder, create a TextView variable called listItemNumberView
 
     // TODO (14) Create a constructor for NumberViewHolder that accepts a View called itemView as a parameter
     // TODO (15) Within the constructor, call super(itemView) and then find listItemNumberView by ID
