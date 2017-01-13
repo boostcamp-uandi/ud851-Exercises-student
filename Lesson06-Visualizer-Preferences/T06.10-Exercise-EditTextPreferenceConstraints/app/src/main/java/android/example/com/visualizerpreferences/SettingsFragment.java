@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 // TODO (1) Implement OnPreferenceChangeListener
 public class SettingsFragment extends PreferenceFragmentCompat implements
-        OnSharedPreferenceChangeListener {
+        OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -52,6 +52,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             }
         }
         // TODO (3) Add the OnPreferenceChangeListener specifically to the EditTextPreference
+        Preference editTextreference = findPreference(getResources().getString(R.string.pref_size_key));
+        editTextreference.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -92,6 +94,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     // to a float; if it cannot, show a helpful error message and return false. If it can be converted
     // to a float check that that float is between 0 (exclusive) and 3 (inclusive). If it isn't, show
     // an error message and return false. If it is a valid number, return true.
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String prefKey = preference.getKey();
+        if(prefKey.equals(getResources().getString(R.string.pref_size_key))) {
+            String value = (String)newValue;
+            float size;
+            Toast errorToast = Toast.makeText(getContext(), "Please Select a number between 0.0(exclusive) and 3.0(inclusive)", Toast.LENGTH_SHORT);
+            if(value.equals(""))
+                size = 1;
+            try {
+                size = Float.parseFloat(value);
+                if(size > 3 || size < 0) {
+                    errorToast.show();
+                    return false;
+                }
+            } catch(NumberFormatException e) {
+                errorToast.show();
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
