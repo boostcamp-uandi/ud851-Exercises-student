@@ -27,7 +27,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
+
+import com.example.android.todolist.data.TaskContract;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -148,6 +151,18 @@ public class MainActivity extends AppCompatActivity implements
 
                 // TODO (5) Query and load all task data in the background; sort by priority
                 // [Hint] use a try/catch block to catch any errors in loading data
+                try {
+                    return getContentResolver().query(
+                            TaskContract.TaskEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            TaskContract.TaskEntry.COLUMN_PRIORITY
+                    );
+                } catch (Exception e) {
+                    Log.e(TAG, "Fail to asynchronously load data");
+                    e.printStackTrace();
+                }
 
                 return null;
             }
