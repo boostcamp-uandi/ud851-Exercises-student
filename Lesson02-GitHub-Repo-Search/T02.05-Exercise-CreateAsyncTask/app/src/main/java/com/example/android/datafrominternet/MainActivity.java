@@ -15,6 +15,7 @@
  */
 package com.example.android.datafrominternet;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -57,12 +58,9 @@ public class MainActivity extends AppCompatActivity {
         URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery);
         mUrlDisplayTextView.setText(githubSearchUrl.toString());
         String githubSearchResults = null;
-        try {
-            githubSearchResults = NetworkUtils.getResponseFromHttpUrl(githubSearchUrl);
-            mSearchResultsTextView.setText(githubSearchResults);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        new GithubQueryTask().execute(githubSearchUrl);
+
         // TODO (4) Create a new GithubQueryTask and call its execute method, passing in the url to query
     }
 
@@ -81,8 +79,33 @@ public class MainActivity extends AppCompatActivity {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
             makeGithubSearchQuery();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class GithubQueryTask extends AsyncTask<URL, Void, String>  {
+
+        @Override
+        protected String doInBackground(URL... params) {
+            URL searchUrl = params[0];
+
+            String results = null;
+            try {
+                results = NetworkUtils.getResponseFromHttpUrl(searchUrl);
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(String results) {
+            if (results != null && !results.equals("")) {
+                mSearchResultsTextView.setText(results);
+            }
+        }
+
     }
 }

@@ -7,6 +7,11 @@
           - Used by Preferences  -
           - - - - - - - - - - - - - - - -->
     <!-- TODO (1) Add Strings for checkbox preference -->
+    <string name="number_one">1</string>
+    <string name="number_two">2</string>
+
+    <string name="pref_show_bass_key" translatable="false">show_bass</string>
+
 
     <!-- Value in SharedPreferences for red color option -->
     <string name="pref_color_red_value" translatable="false">red</string>

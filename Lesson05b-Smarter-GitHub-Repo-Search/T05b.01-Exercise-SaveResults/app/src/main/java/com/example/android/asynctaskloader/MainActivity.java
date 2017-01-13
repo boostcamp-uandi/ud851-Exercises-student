@@ -33,8 +33,10 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     // TODO (1) Create a static final key to store the query's URL
+    static final String QUERY_URL = "query";
 
     // TODO (2) Create a static final key to store the search's raw JSON
+    static final String SEARCH_RAW_JSON = "results";
 
     private EditText mSearchBoxEditText;
 
@@ -60,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
         // TODO (9) If the savedInstanceState bundle is not null, set the text of the URL and search results TextView respectively
+        if(savedInstanceState != null) {
+            mUrlDisplayTextView.setText(savedInstanceState.getString(QUERY_URL));
+            mSearchResultsTextView.setText(savedInstanceState.getString(SEARCH_RAW_JSON));
+
+        }
     }
 
     /**
@@ -152,6 +159,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO (3) Override onSaveInstanceState to persist data across Activity recreation
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+
+        String url = mUrlDisplayTextView.getText().toString();
+        bundle.putString(QUERY_URL, url);
+
+        String json = mSearchResultsTextView.getText().toString();
+        bundle.putString(SEARCH_RAW_JSON, json);
+    }
     // Do the following steps within onSaveInstanceState
     // TODO (4) Make sure super.onSaveInstanceState is called before doing anything else
 
