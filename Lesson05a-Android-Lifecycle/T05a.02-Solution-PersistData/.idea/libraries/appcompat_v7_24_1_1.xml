@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="appcompat-v7-24.1.1">
+    <CLASSES>
+      <root url="file://C:/tmp/T05a.02-Solution-PersistData/app/intermediates/exploded-aar/com.android.support/appcompat-v7/24.1.1/res" />
+      <root url="jar://C:/tmp/T05a.02-Solution-PersistData/app/intermediates/exploded-aar/com.android.support/appcompat-v7/24.1.1/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://C:/Android/sdk/extras/android/m2repository/com/android/support/appcompat-v7/24.1.1/appcompat-v7-24.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
