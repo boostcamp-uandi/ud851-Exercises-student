@@ -9,10 +9,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!-- TODO (15) Add the launch mode "single top" attribute to the MainActivity so that when you open
+
         MainActivity using a notification, it will take you back to the already opened activity, not
         generate a new one -->
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

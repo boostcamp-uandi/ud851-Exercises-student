@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/visualizer_menu" android:title="@string/menuname" android:orderInCategory="100"></item>
+</menu>
