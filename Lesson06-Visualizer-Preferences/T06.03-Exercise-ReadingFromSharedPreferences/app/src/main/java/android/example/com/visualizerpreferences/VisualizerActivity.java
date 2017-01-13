@@ -18,43 +18,76 @@ package android.example.com.visualizerpreferences;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.example.com.visualizerpreferences.AudioVisuals.AudioInputReader;
 import android.example.com.visualizerpreferences.AudioVisuals.VisualizerView;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class VisualizerActivity extends AppCompatActivity {
+public class VisualizerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final int MY_PERMISSION_RECORD_AUDIO_REQUEST_CODE = 88;
     private VisualizerView mVisualizerView;
     private AudioInputReader mAudioInputReader;
 
+    private static final String TAG = VisualizerActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualizer);
         mVisualizerView = (VisualizerView) findViewById(R.id.activity_visualizer);
-        defaultSetup();
+        setupSharedPreferences();
         setupPermissions();
     }
 
     // TODO (1) Change the name of default setup to setupSharedPreferences
-    private void defaultSetup() {
+    private void setupSharedPreferences() {
         // TODO (2) Get a reference to the default shared preferences from the PreferenceManager class
         // TODO (3) Get the value of the show_bass checkbox preference and use it to call setShowBass
-        mVisualizerView.setShowBass(true);
-        mVisualizerView.setShowMid(true);
-        mVisualizerView.setShowTreble(true);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mVisualizerView.setShowBass(sharedPreferences.getBoolean(getString(R.string.pref_show_bass_key),
+                getResources().getBoolean(R.bool.pref_show_bass_default)));
+        mVisualizerView.setShowMid(sharedPreferences.getBoolean(getString(R.string.pref_show_mid_range_key),
+                getResources().getBoolean(R.bool.pref_show_mid_range_default)));
+        mVisualizerView.setShowTreble(sharedPreferences.getBoolean(getString(R.string.pref_show_treble_key),
+                getResources().getBoolean(R.bool.pref_show_treble_default)));
         mVisualizerView.setMinSizeScale(1);
         mVisualizerView.setColor(getString(R.string.pref_color_red_value));
+        loadColorFromPreferences(sharedPreferences);
+        loadSizeFromSharedPreferences(sharedPreferences);
+        // now this can listen to change
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+    }
+    public void loadColorFromPreferences(SharedPreferences sharedPreferences){
+        mVisualizerView.setColor(sharedPreferences.getString(getString(R.string.pref_color_key),
+                getString(R.string.pref_color_red_value)));
+    }
+
+    public void loadSizeFromSharedPreferences(SharedPreferences sharedPreferences){
+        // size를 얻어와서 적용 시켜줘야됨...!
+        // where can we get the size?
+        // from sharedPreference!!
+        float minSize = Float.parseFloat(sharedPreferences.getString(getString(R.string.pref_size_key),
+                getString(R.string.pref_size_default)));
+        mVisualizerView.setMinSizeScale(minSize);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -91,10 +124,10 @@ public class VisualizerActivity extends AppCompatActivity {
      **/
     @Override
     protected void onPause() {
-        super.onPause();
-        if (mAudioInputReader != null) {
-            mAudioInputReader.shutdown(isFinishing());
-        }
+            super.onPause();
+            if (mAudioInputReader != null) {
+                mAudioInputReader.shutdown(isFinishing());
+            }
     }
 
     @Override
@@ -104,7 +137,6 @@ public class VisualizerActivity extends AppCompatActivity {
             mAudioInputReader.restart();
         }
     }
-    
     /**
      * App Permissions for Audio
      **/
@@ -143,6 +175,25 @@ public class VisualizerActivity extends AppCompatActivity {
             }
             // Other permissions could go down here
 
+        }
+    }
+
+    // whenever SharedPreferences listener listen to something, this method will be called
+    // it means whenever sharedprference is changed, this method will be called.
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // if the change happens in bass_key
+        Log.d(TAG, "VisualizerActivity 안에서 change 감지...!");
+        if(key.equals(getString(R.string.pref_show_bass_key))){
+            mVisualizerView.setShowBass(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_show_bass_default)));
+        }else if(key.equals(getString(R.string.pref_show_mid_range_key))){
+            mVisualizerView.setShowTreble(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_show_mid_range_default)));
+        }else if (key.equals(getString(R.string.pref_show_treble_key))){
+            mVisualizerView.setShowMid(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_show_mid_range_default)));
+        }else if(key.equals(getString(R.string.pref_color_key))){
+            loadColorFromPreferences(sharedPreferences);
+        }else if(key.equals(getString(R.string.pref_size_key))){
+            loadSizeFromSharedPreferences(sharedPreferences);
         }
     }
 }

@@ -17,17 +17,23 @@ package android.example.com.visualizerpreferences;
  */
 
 import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.example.com.visualizerpreferences.AudioVisuals.AudioInputReader;
 import android.example.com.visualizerpreferences.AudioVisuals.VisualizerView;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-public class VisualizerActivity extends AppCompatActivity {
+public class VisualizerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final int MY_PERMISSION_RECORD_AUDIO_REQUEST_CODE = 88;
     private VisualizerView mVisualizerView;
@@ -38,16 +44,69 @@ public class VisualizerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualizer);
         mVisualizerView = (VisualizerView) findViewById(R.id.activity_visualizer);
-        defaultSetup();
+        setupSharedPreferences();
         setupPermissions();
     }
 
-    private void defaultSetup() {
-        mVisualizerView.setShowBass(true);
-        mVisualizerView.setShowMid(true);
-        mVisualizerView.setShowTreble(true);
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals("show_bass")){
+            mVisualizerView.setShowBass(sharedPreferences.getBoolean("show_bass", true));
+        }else if(key.equals("show_mid")){
+            mVisualizerView.setShowMid(sharedPreferences.getBoolean("show_mid", true));
+        }else if(key.equals("show_treble")){
+            mVisualizerView.setShowTreble(sharedPreferences.getBoolean("show_treble", true));
+        }else if(key.equals(getString(R.string.pref_color_key))){
+            loadColorFromPreferences(sharedPreferences);
+        }
+    }
+
+    private void setupSharedPreferences(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mVisualizerView.setShowBass(sharedPreferences.getBoolean("show_bass", true));
+        mVisualizerView.setShowMid(sharedPreferences.getBoolean("show_mid", true));
+        mVisualizerView.setShowTreble(sharedPreferences.getBoolean("show_treble", true));
         mVisualizerView.setMinSizeScale(1);
-        mVisualizerView.setColor(getString(R.string.pref_color_red_value));
+        loadColorFromPreferences(sharedPreferences);
+
+        // Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    public void loadColorFromPreferences(SharedPreferences sharedPreferences){
+        mVisualizerView.setColor(sharedPreferences.getString("color",
+                getString(R.string.pref_color_red_value)));
+    }
+
+    /**
+     * Methods for setting up the menu
+     **/
+    // COMPLETED (5) Add the menu to the menu bar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /* Use AppCompatActivity's method getMenuInflater to get a handle on the menu inflater */
+        MenuInflater inflater = getMenuInflater();
+        /* Use the inflater's inflate method to inflate our visualizer_menu layout to this menu */
+        inflater.inflate(R.menu.visualizer_menu, menu);
+        /* Return true so that the visualizer_menu is displayed in the Toolbar */
+        return true;
+    }
+
+    // COMPLETED (6) When the "Settings" menu item is pressed, open SettingsActivity
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }else if(id == R.id.action_test){
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -72,6 +131,13 @@ public class VisualizerActivity extends AppCompatActivity {
         if (mAudioInputReader != null) {
             mAudioInputReader.restart();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+
     }
 
     /**
@@ -115,14 +181,4 @@ public class VisualizerActivity extends AppCompatActivity {
         }
     }
 
-    // TODO (1) Create a new Empty Activity named SettingsActivity; make sure to generate the
-    // activity_settings.xml layout file as well and add the activity to the manifest
-
-    // TODO (2) Add a new resource folder called menu and create visualizer_menu.xml
-    // TODO (3) In visualizer_menu.xml create a menu item with a single item. The id and title
-    // should be saved in strings.xml, it should never be shown as an action,
-    // orderInCategory should be 100
-
-    // TODO (5) Add the menu to the menu bar
-    // TODO (6) When the "Settings" menu item is pressed, open SettingsActivity
 }

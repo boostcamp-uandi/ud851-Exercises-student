@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.udacity.example.droidtermsprovider.DroidTermsExampleContract;
 
@@ -35,11 +36,15 @@ public class MainActivity extends AppCompatActivity {
     // The data from the DroidTermsExample content provider
     private Cursor mData;
 
+    int definition_Index;
+    int word_Index;
+
     // The current state of the app
     private int mCurrentState;
 
     private Button mButton;
-
+    private TextView definition;
+    private TextView word;
     // This state is when the word definition is hidden and clicking the button will therefore
     // show the definition
     private final int STATE_HIDDEN = 0;
@@ -57,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
         // Get the views
         // TODO (1) You'll probably want more than just the Button
         mButton = (Button) findViewById(R.id.button_next);
-
+        definition = (TextView) findViewById(R.id.text_view_definition);
+        word = (TextView) findViewById(R.id.text_view_word);
         //Run the database operation to get the cursor off of the main thread
         new WordFetchTask().execute();
 
@@ -90,8 +96,27 @@ public class MainActivity extends AppCompatActivity {
         // TODO (3) Go to the next word in the Cursor, show the next word and hide the definition
         // Note that you shouldn't try to do this if the cursor hasn't been set yet.
         // If you reach the end of the list of words, you should start at the beginning again.
-        mCurrentState = STATE_HIDDEN;
+        if(mData != null){
+            // mData가 null이 아니어야한다..!
+            // 즉 mData가 성공적으로 받아와진 cursor라면..!
+            mData.moveToNext();
 
+            // 단어랑 정의 가져왔음
+            String getWord = mData.getString(word_Index);
+            String getDefinition = mData.getString(definition_Index);
+
+            // 텍스트 뷰에 단어와 정의를 보여준다. 근데 정의는 안보여야 되니깐 visibility 설정
+            word.setVisibility(View.VISIBLE);
+            definition.setVisibility(View.INVISIBLE);
+            word.setText(getWord);
+            definition.setText(getDefinition);
+
+            mCurrentState = STATE_HIDDEN;
+
+            if(mData.isLast()){
+                mData.moveToFirst();
+            }
+        }
     }
 
     public void showDefinition() {
@@ -100,14 +125,9 @@ public class MainActivity extends AppCompatActivity {
         mButton.setText(getString(R.string.next_word));
 
         // TODO (4) Show the definition
+        definition.setVisibility(View.VISIBLE);
         mCurrentState = STATE_SHOWN;
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // TODO (5) Remember to close your cursor!
     }
 
     // Use an async task to do the data fetch off of the main thread.
@@ -138,6 +158,15 @@ public class MainActivity extends AppCompatActivity {
 
             // TODO (2) Initialize anything that you need the cursor for, such as setting up
             // the screen with the first word and setting any other instance variables
+            // 처음 단어 보여주자..! 정의는 보여주지말고 버튼이 눌리면 보여주자..! visible이 필요할거같다..!
+            // 그러기 위해서 우선 cursor를 써야됨..
+
+            word_Index = cursor.getColumnIndex(DroidTermsExampleContract.COLUMN_WORD);
+            definition_Index = cursor.getColumnIndex(DroidTermsExampleContract.COLUMN_DEFINITION);
+
+
+            // 처음 단어 보여주기 위해서 nextWord()함수 필요함!!
+            nextWord();
         }
     }
 
