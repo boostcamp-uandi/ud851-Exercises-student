@@ -1,6 +1,7 @@
 package com.example.android.waitlist;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase mDb;
 
     // TODO (1) Create local EditText members for mNewGuestNameEditText and mNewPartySizeEditText
-
+    private EditText mNewGuestNameEditText;
+    private EditText mNewPartySIzeEditText;
     // TODO (13) Create a constant string LOG_TAG that is equal to the class.getSimpleName()
 
     @Override
@@ -36,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         waitlistRecyclerView = (RecyclerView) this.findViewById(R.id.all_guests_list_view);
 
         // TODO (2) Set the Edit texts to the corresponding views using findViewById
-
+        mNewGuestNameEditText = (EditText)findViewById(R.id.person_name_edit_text);
+        mNewPartySIzeEditText = (EditText)findViewById(R.id.party_count_edit_text);
         // Set layout for the RecyclerView, because it's a list we are using the linear layout
         waitlistRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -49,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         mDb = dbHelper.getWritableDatabase();
 
         // TODO (3) Remove this fake data call since we will be inserting our own data now
-        TestUtil.insertFakeData(mDb);
 
         // Get all guest info from the database and save in a cursor
         Cursor cursor = getAllGuests();
@@ -70,19 +72,28 @@ public class MainActivity extends AppCompatActivity {
     public void addToWaitlist(View view) {
 
         // TODO (9) First thing, check if any of the EditTexts are empty, return if so
-
+        if(mNewPartySIzeEditText.getText() == null || mNewGuestNameEditText.getText() == null){
+            return;
+        }
+        int partySize = 1;
         // TODO (10) Create an integer to store the party size and initialize to 1
 
         // TODO (11) Use Integer.parseInt to parse mNewPartySizeEditText.getText to an integer
+        try {
+            partySize = Integer.parseInt(mNewPartySIzeEditText.getText().toString());
+        } catch (Exception ex){
 
+        }
         // TODO (12) Make sure you surround the Integer.parseInt with a try catch and log any exception
 
         // TODO (14) call addNewGuest with the guest name and party size
-
+        addGuest(mNewGuestNameEditText.getText().toString(), partySize);
         // TODO (19) call mAdapter.swapCursor to update the cursor by passing in getAllGuests()
-
+        mAdapter.swapCursor(getAllGuests());
         // TODO (20) To make the UI look nice, call .getText().clear() on both EditTexts, also call clearFocus() on mNewPartySizeEditText
-
+        mNewPartySIzeEditText.getText().clear();
+        mNewGuestNameEditText.getText().clear();
+        mNewPartySIzeEditText.clearFocus();
     }
 
 
@@ -105,7 +116,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO (4) Create a new addGuest method
+    private long addGuest(String name, int partySize){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(WaitlistContract.WaitlistEntry.COLUMN_GUEST_NAME, name);
+        contentValues.put(WaitlistContract.WaitlistEntry.COLUMN_PARTY_SIZE, partySize);
+        return mDb.insert(WaitlistContract.WaitlistEntry.TABLE_NAME, null, contentValues);
+    }
 
+    //왜 안될까.. ㅠㅠ
+    //는 되는데 재시작 해야만 됨 즉시 업데이트 하는 기작이 미구현인가
     // TODO (5) Inside, create a ContentValues instance to pass the values onto the insert query
 
     // TODO (6) call put to insert the name value with the key COLUMN_GUEST_NAME
