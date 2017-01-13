@@ -15,17 +15,19 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.Gues
 
     private Context mContext;
     // TODO (1) Replace the mCount with a Cursor field called mCursor
-    private int mCount;
+    private Cursor mCursor;
 
     /**
      * Constructor using the context and the db cursor
      * @param context the calling context/activity
      */
     // TODO (2) Modify the constructor to accept a cursor rather than an integer
-    public GuestListAdapter(Context context, int count) {
+    public GuestListAdapter(Context context, Cursor cursor) {
         this.mContext = context;
-        // TODO (3) Set the local mCursor to be equal to cursor
-        mCount = count;
+        // TODO (10) Set the local mCount to be equal to count
+        // 데이터베이스의 데이터를 가지고 있는 cursor가 넘어왔다..!
+        // 리사이클러에서 뷰의 갯수를 mCursor를 통해서 딱 그 갯수만큼 만들어야한다..!
+        mCursor = cursor;
     }
 
     @Override
@@ -47,13 +49,27 @@ public class GuestListAdapter extends RecyclerView.Adapter<GuestListAdapter.Gues
         // TODO (8) Set the holder's nameTextView text to the guest's name
 
         // TODO (9) Set the holder's partySizeTextView text to the party size
+
+        // onBindViewHolder는 실질적으로 뷰를 움직인다. 즉 어댑터 속에있는 뷰를 컨트롤 하는 부분인것이다.
+        // 따라서 뷰를 생성해줄때 (뷰 홀더를 가지고) 데이터베이스 내용에 따라서 얼마만큼의 뷰를 어떤 정보로 표시할것인지 결정한다.
+        if(!mCursor.moveToPosition(position))
+            return;
+        String name = mCursor.getString(mCursor.getColumnIndex(WaitlistContract.WaitlistEntry.COLUMN_GUEST_NAME));
+        int partySize = mCursor.getInt(mCursor.getColumnIndex(WaitlistContract.WaitlistEntry.COLUMN_PARTY_SIZE));
+        holder.nameTextView.setText(name);
+        holder.partySizeTextView.setText(String.valueOf(partySize));
+
+        long id = mCursor.getLong(mCursor.getColumnIndex(WaitlistContract.WaitlistEntry._ID));
+        holder.itemView.setTag(id);
+
     }
 
     @Override
     public int getItemCount() {
         // TODO (4) Update the getItemCount to return the getCount of mCursor
-        return mCount;
+        return mCursor.getCount();
     }
+
 
 
     /**
