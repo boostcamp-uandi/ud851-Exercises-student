@@ -19,6 +19,7 @@ package android.example.com.visualizerpreferences;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.support.annotation.FloatRange;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
@@ -51,6 +52,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 setPreferenceSummary(p, value);
             }
         }
+
+
     }
 
     @Override
@@ -73,7 +76,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
      * @param value      The value that the preference was updated to
      */
     private void setPreferenceSummary(Preference preference, String value) {
-        // TODO (3) Don't forget to add code here to properly set the summary for an EditTextPreference
         if (preference instanceof ListPreference) {
             // For list preferences, figure out the label of the selected value
             ListPreference listPreference = (ListPreference) preference;
@@ -82,6 +84,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 // Set the summary to that label
                 listPreference.setSummary(listPreference.getEntries()[prefIndex]);
             }
+        }else if(preference instanceof EditTextPreference){
+            preference.setSummary(value);
         }
     }
     
@@ -98,4 +102,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
+
+
 }

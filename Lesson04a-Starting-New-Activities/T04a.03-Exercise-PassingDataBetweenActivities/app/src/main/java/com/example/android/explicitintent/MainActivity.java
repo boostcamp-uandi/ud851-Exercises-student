@@ -24,6 +24,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity {
 
     /* Fields that will store our EditText and Button */
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
+                String textGot = mNameEntry.getText().toString();
                 // TODO (1) Retrieve the text from the EditText and store it in a variable
 
                 /*
@@ -74,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent startChildActivityIntent = new Intent(context, destinationActivity);
 
                 // TODO (2) Use the putExtra method to put the String from the EditText in the Intent
+
+                startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, textGot);
 
                 /*
                  * Once the Intent has been created, we can use Activity's method, "startActivity"

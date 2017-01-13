@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final String LIFECYCLE_CALLBACK_TEXT_KEY = "key";
+
     // TODO (1) Create a key String called LIFECYCLE_CALLBACKS_TEXT_KEY
 
     /* Constant values for the names of each respective lifecycle callback */
@@ -48,6 +50,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey(LIFECYCLE_CALLBACK_TEXT_KEY)){
+                String prevLog = savedInstanceState.getString(LIFECYCLE_CALLBACK_TEXT_KEY);
+                mLifecycleDisplay.setText(prevLog);
+            }
+
+        }
 
         // TODO (6) If savedInstanceState is not null and contains LIFECYCLE_CALLBACKS_TEXT_KEY, set that text on our TextView
 
@@ -135,6 +145,12 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         logAndAppend(ON_DESTROY);
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstance){
+        super.onSaveInstanceState(savedInstance);
+        logAndAppend(ON_SAVE_INSTANCE_STATE);
+        savedInstance.putString(LIFECYCLE_CALLBACK_TEXT_KEY, mLifecycleDisplay.getText().toString());
     }
 
     // TODO (2) Override onSaveInstanceState

@@ -34,7 +34,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 // TODO (1) Implement OnSharedPreferenceChangeListener
-public class VisualizerActivity extends AppCompatActivity {
+public class VisualizerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final int MY_PERMISSION_RECORD_AUDIO_REQUEST_CODE = 88;
     private VisualizerView mVisualizerView;
@@ -58,10 +58,16 @@ public class VisualizerActivity extends AppCompatActivity {
         mVisualizerView.setShowTreble(true);
         mVisualizerView.setMinSizeScale(1);
         mVisualizerView.setColor(getString(R.string.pref_color_red_value));
-        // TODO (3) Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-    // TODO (2) Override the onSharedPreferenceChanged method and update the show bass preference
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
     // TODO (4) Override onDestroy and unregister the listener
 
     /**
@@ -150,6 +156,13 @@ public class VisualizerActivity extends AppCompatActivity {
             }
             // Other permissions could go down here
 
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        if(s.equals(getString((R.string.pref_show_bass_key)))){
+            mVisualizerView.setShowBass(sharedPreferences.getBoolean(s, getResources().getBoolean(R.bool.pref_show_bass_default)));
         }
     }
 }

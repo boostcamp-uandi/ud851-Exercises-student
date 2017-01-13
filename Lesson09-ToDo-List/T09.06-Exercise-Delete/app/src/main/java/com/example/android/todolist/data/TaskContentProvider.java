@@ -156,14 +156,26 @@ public class TaskContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 
-        // TODO (1) Get access to the database and write URI matching code to recognize a single item
+        final SQLiteDatabase db = mTaskDbHelper.getWritableDatabase();
 
-        // TODO (2) Write the code to delete a single row of data
-        // [Hint] Use selections to delete an item by its row ID
+        int match = sUriMatcher.match(uri);
+        int ret;
 
-        // TODO (3) Notify the resolver of a change and return the number of items deleted
+        switch (match){
+            case TASK_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                ret = db.delete(TABLE_NAME,
+                        "_id=?",
+                        new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        if(ret != 0)    getContext().getContentResolver().notifyChange(uri, null);
+
+        return ret;
+
     }
 
 
