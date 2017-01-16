@@ -15,6 +15,8 @@
  */
 package com.example.android.implicitintents;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -36,9 +38,10 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onClickOpenWebpageButton(View v) {
         // TODO (5) Create a String that contains a URL ( make sure it starts with http:// or https:// )
-
+        String urlAsString = "http:www.udacity.com";
         // TODO (6) Replace the Toast with a call to openWebPage, passing in the URL String from the previous step
-        Toast.makeText(this, "TODO: Open a web page when this button is clicked", Toast.LENGTH_SHORT).show();
+        openWeb(urlAsString);
+        //Toast.makeText(this, "TODO: Open a web page when this button is clicked", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -79,7 +82,15 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO (1) Create a method called openWebPage that accepts a String as a parameter
     // Do steps 2 - 4 within openWebPage
-
+    private void openWeb(String url){
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        //인텐트에 대한 정보(수행하고자 하는 액션)를 처리할수 있는 컴포넌트가 있는지 확인.
+        //getpackagemanger -> 패키지가 설치가 되어있는지 여부를 확인하는 매소드.
+        if(intent.resolveActivity(getPackageManager())!=null){
+            startActivity(intent);
+        }
+    }
         // TODO (2) Use Uri.parse to parse the String into a Uri
 
         // TODO (3) Create an Intent with Intent.ACTION_VIEW and the webpage Uri as parameters

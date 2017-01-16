@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import static android.R.attr.mimeType;
+import static android.R.attr.text;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,10 +64,13 @@ public class MainActivity extends AppCompatActivity {
      * @param v Button that was clicked.
      */
     public void onClickShareTextButton(View v) {
+
+        String str = "Hello bitches";
         // TODO (5) Specify a String you'd like to share
 
         // TODO (6) Replace the Toast with shareText, passing in the String from step 5
-        Toast.makeText(this, "TODO: Share text when this is clicked", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "TODO: Share text when this is clicked", Toast.LENGTH_LONG).show();
+        shareText(str);
     }
 
     /**
@@ -140,6 +144,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void shareText(String str){
+        String mimeType = "text/plain";
+        String title = "Learning How to Share";
+        String textToShare = "Hello there";
+
+        ShareCompat.IntentBuilder.from(this).setChooserTitle(title).setType(mimeType).setText(textToShare).startChooser();
+
+    }
     // TODO (1) Create a void method called shareText that accepts a String as a parameter
     // Do steps 2 - 4 within the shareText method
 
